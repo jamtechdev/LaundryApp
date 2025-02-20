@@ -20,7 +20,7 @@ const CourseSelectionScreen = () => {
             <Text style={styles.title}>Select a Course</Text>
             <FlatList
                 data={courses}
-                keyExtractor={(item) => item.devicecourceno.toString()}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         style={styles.courseItem}

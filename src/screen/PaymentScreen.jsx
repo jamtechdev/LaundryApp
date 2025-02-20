@@ -1,118 +1,62 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Alert } from "react-native";
-import QRCode from "react-native-qrcode-svg";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { View, ActivityIndicator, Alert } from 'react-native';
+import { WebView } from 'react-native-webview';
+import axios from 'axios';
 
-const PAYPAY_API_KEY="a_uEWiVpQu74_9dku";
-const PAYPAY_ACCESS_TOKEN="Nevmmudjtrnezf24YXfGu4lwqUPqkHfBpJ8YaYArw7Q=";
-const PAYPAY_API_BASE_URL="https://api.paypay.ne.jp/v2"
-
-const PaymentScreen = ({ route, navigation }) => {
-    const { course, selectedTime, method } = route.params;
-    const [qrCodeUrl, setQrCodeUrl] = useState(null);
+const PaymentScreen = ({ navigation }) => {
+    const [paymentUrl, setPaymentUrl] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [paymentStatus, setPaymentStatus] = useState("PENDING");
 
-    // Generate QR Code Payment URL
-    const generateQRCode = async () => {
+    useEffect(() => {
+        initiatePayment();
+    }, []);
+
+    const initiatePayment = async () => {
         try {
-            const response = await axios.post("https://api.paypay.ne.jp/v2/codes", {
-                merchantPaymentId: `order_${Date.now()}`,
-                amount: {
-                    amount: course.fee,
-                    currency: "JPY"
-                },
-                codeType: "ORDER_QR",
-                redirectType: "WEB_LINK",
-                redirectUrl: "https://yourwebsite.com/payment-success",
-                orderItems: [
-                    {
-                        name: course.devicecourcename,
-                        category: "Laundry",
-                        quantity: 1,
-                        productId: course.deviceid,
-                        unitPrice: {
-                            amount: course.fee,
-                            currency: "JPY"
-                        }
-                    }
-                ]
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${PAYPAY_ACCESS_TOKEN}`,
-                    "X-API-Key": PAYPAY_API_KEY,
-                  },
+            const response = await axios.get('https://laundry-pay.net/BluetoothTransaction', {
+                params: {
+                    Amount: 500,
+                    PayType: 5, // WeChat Pay
+                    env: 1,  // 1 = Production, 0 = Test
+                    paymentid: `PAY${Date.now()}`,
+                    userID: `USER${Date.now()}`,
+                    deviceid: "DEVICE123",
+                    deviceCourceNo: "COURSE456"
+                }
             });
+            console.log(response)
+            const htmlResponse = response.data;
+            const regex = /<form action="([^"]+)"/;
+            const match = htmlResponse.match(regex);
 
-            if (response.data.resultInfo.code === "SUCCESS") {
-                setQrCodeUrl(response.data.data.url);
+            if (htmlResponse) {
+                setPaymentUrl(htmlResponse);
             } else {
-                Alert.alert("Error", "Failed to generate QR Code");
+                Alert.alert('Payment Error', 'Invalid API response.');
+                navigation.goBack();
             }
         } catch (error) {
-            console.error("QR Code Generation Error:", error);
-            Alert.alert("Error", "Failed to generate QR Code");
+            console.error('Payment API Error:', error);
+            Alert.alert('Payment Error', 'Failed to fetch payment URL.');
+            navigation.goBack();
         } finally {
             setLoading(false);
         }
     };
 
-    // Check Payment Status
-    const checkPaymentStatus = async () => {
-        try {
-            const response = await axios.get(`https://api.paypay.ne.jp/v2/payments/${course.deviceid}`, {
-                headers: {
-                    Authorization: `Bearer ${PAYPAY_ACCESS_TOKEN}`,
-                    "X-API-Key": PAYPAY_API_KEY,
-                  },
-            });
-
-            if (response.data.data.status === "COMPLETED") {
-                setPaymentStatus("COMPLETED");
-                Alert.alert("Payment Successful", "Your payment has been processed.");
-                navigation.navigate("PaymentSuccess"); // Redirect to success screen
-            }
-        } catch (error) {
-            console.error("Payment Status Error:", error);
-        }
-    };
-
-    useEffect(() => {
-        generateQRCode();
-        const interval = setInterval(() => {
-            if (paymentStatus === "PENDING") {
-                checkPaymentStatus();
-            }
-        }, 5000); // Check every 5 seconds
-        return () => clearInterval(interval);
-    }, []);
-
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Scan the QR Code to Pay</Text>
+        <View style={{ flex: 1 }}>
             {loading ? (
-                <ActivityIndicator size="large" />
-            ) : qrCodeUrl ? (
-                <>
-                    <QRCode value={qrCodeUrl} size={250} />
-                    <TouchableOpacity style={styles.checkButton} onPress={checkPaymentStatus}>
-                        <Text style={styles.checkText}>Check Payment Status</Text>
-                    </TouchableOpacity>
-                </>
+                <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 20 }} />
             ) : (
-                <Text style={styles.errorText}>QR Code generation failed.</Text>
+                paymentUrl ? (
+                        <WebView source={{ html: paymentUrl }} />
+                ) : (
+                    Alert.alert('Error', 'No payment URL found.')
+                )
             )}
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
-    title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
-    checkButton: { marginTop: 20, padding: 15, backgroundColor: "#007bff", borderRadius: 10 },
-    checkText: { fontSize: 18, fontWeight: "bold", color: "#fff", textAlign: "center" },
-    errorText: { color: "red", fontSize: 16, marginTop: 10 }
-});
 
 export default PaymentScreen;
