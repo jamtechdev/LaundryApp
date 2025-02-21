@@ -1,16 +1,17 @@
-import * as React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import AppNavigator from './src/navigation';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import RootNavigation from './src/navigation';
+import {View, Text, StyleSheet} from 'react-native';
+import {AppProvider} from './src/_context/AppProvider';
 
-export default function App() {
+function App() {
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{flex: 1, backgroundColor: '#f5f5f5'}}>
-        <NavigationContainer>
-          <RootNavigation />
-        </NavigationContainer>
-      </SafeAreaView>
+      <AppProvider>
+        <AppNavigator />
+      </AppProvider>
     </SafeAreaProvider>
   );
 }
+
+export default App;
