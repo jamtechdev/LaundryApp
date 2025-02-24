@@ -1,12 +1,13 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://laundry-pay.net/admin/api/data';
+const API_BASE_URL = 'https://laundry-pay.net/admin/api';
 const OAUTH_TOKEN_URL = 'https://laundry-pay.net/admin/oauth/token';
 
 const deviceService = {
     getAuthToken,
     getLandryDeviceListwithShop,
     getLandryDeviceListwithDeviceId,
+    startDevice
 };
 
 export default deviceService;
@@ -37,7 +38,7 @@ function getAuthToken() {
  * @param {string} token - The bearer token for authorization.
  */
 function getLandryDeviceListwithDeviceId(deviceId, token) {
-    const url = `${API_BASE_URL}/LandryDeviceList/query-column`;
+    const url = `${API_BASE_URL}/data/LandryDeviceList/query-column`;
     const params = { q: `deviceid eq ${deviceId}` };
 
     return axios.get(url, {
@@ -56,7 +57,7 @@ function getLandryDeviceListwithDeviceId(deviceId, token) {
  * @param {string} token - The bearer token for authorization.
  */
 function getLandryDeviceListwithShop(shopId, token) {
-    const url = `${API_BASE_URL}/LandryDeviceList/query-column`;
+    const url = `${API_BASE_URL}/data/LandryDeviceList/query-column`;
     const params = { q: `shop eq ${shopId}` };
 
     return axios.get(url, {
@@ -65,5 +66,26 @@ function getLandryDeviceListwithShop(shopId, token) {
             Authorization: `Bearer ${token}`
         },
         params
+    });
+}
+
+
+
+/**
+ * Initiates the device start process for a given device and sales amount.
+ *
+ * @param {string|number} deviceId - The ID of the device.
+ * @param {string|number} salesAmount - The sales amount.
+ * @param {string} token - The bearer token for authorization.
+ * @returns {Promise} - Axios promise.
+ */
+function startDevice(deviceId ='00001999988', salesAmount, token) {
+    const url = `${API_BASE_URL}/plugins/devicestart/exec/${deviceId}/${salesAmount}`;
+
+    return axios.post(url, null, {
+        headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`
+        }
     });
 }

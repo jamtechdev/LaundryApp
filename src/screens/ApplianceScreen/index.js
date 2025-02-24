@@ -61,7 +61,7 @@ const ApplianceScreen = ({navigation}) => {
           .catch(error => console.error(error));
 
         // Query by shop id
-        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('000010000001', token)
+        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00001999988', token)
         const deviceShopResponse = await deviceService.getLandryDeviceListwithShop(1, token)
         console.log(deviceIdResponse,'Device List by Shop ID:', deviceShopResponse);
 

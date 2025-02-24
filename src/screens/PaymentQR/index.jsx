@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,14 +9,15 @@ import {
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import axios from 'axios';
-import {useAppContext} from '../../_context/AppProvider';
+import { useAppContext } from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import RouteName from '../../utils/Constant';
 import StringConst from '../../utils/StringConstant';
 import FooterText from '../../components/FooterText';
+import deviceService from '../../_services/device.service';
 
-const PaymentQR = ({navigation}) => {
-  const {appliancesValue, machineValue, courseValue, paymentValue, usingTimeValue} =
+const PaymentQR = ({ navigation }) => {
+  const { appliancesValue, machineValue, courseValue, paymentValue, usingTimeValue, authToken } =
     useAppContext();
 
   const [qrCodeData, setQrCodeData] = useState(null);
@@ -24,9 +25,10 @@ const PaymentQR = ({navigation}) => {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [paymentId, setPaymentId] = useState(null);
   const [payment, setPayment] = useState(null);
+  const [showOperateButton, setShowOperateButton] = useState(true);
 
   useEffect(() => {
-    // initiatePayment();
+    // initiatePayment(); // Uncomment if needed
     setTimeout(() => {
       navigation.replace(RouteName.Completion_Screen);
     }, 4000);
@@ -36,20 +38,20 @@ const PaymentQR = ({navigation}) => {
     let interval;
 
     if (paymentId) {
-      interval = setInterval(checkPaymentStatus, 15000); // Poll every 4 seconds
+      interval = setInterval(checkPaymentStatus, 15000); // Poll every 15 seconds
     }
 
     return () => {
-      if (interval) clearInterval(interval); // Cleanup on unmount
+      if (interval) clearInterval(interval);
     };
   }, [paymentId]);
 
   const initiatePayment = async () => {
     try {
       const response = await axios.post(
-        'http://localhost:3000/paypay', // Your backend API
+        'http://localhost:3000/paypay',
         {
-          amount: courseValue.price, // Use course price as payment amount
+          amount: courseValue.price,
         },
       );
 
@@ -61,16 +63,14 @@ const PaymentQR = ({navigation}) => {
         response.data.paymentId
       ) {
         setQrCodeData(response.data.paymentUrl);
-        setPayment(response.data.payment)
-        setPaymentId(response.data.paymentId); // Store paymentId for status check
+        setPayment(response.data.payment);
+        setPaymentId(response.data.paymentId);
       } else {
         Alert.alert('Payment Error', 'Invalid API response.');
-        // navigation.goBack();
       }
     } catch (error) {
       console.error('Payment API Error:', error);
       Alert.alert('Payment Error', 'Failed to fetch QR code.');
-      // navigation.goBack();
     } finally {
       setLoading(false);
     }
@@ -106,6 +106,20 @@ const PaymentQR = ({navigation}) => {
     }
   };
 
+  const handleDeviceStart = async () => {
+    try {
+      const response = await deviceService.startDevice('00001999988', courseValue.price, authToken);
+      console.log(response);
+      // Hide the button for 2 minutes (120,000 milliseconds)
+      setShowOperateButton(false);
+      setTimeout(() => {
+        setShowOperateButton(true);
+      }, 120000);
+    } catch (error) {
+      console.error('Error starting device:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Selected Appliance, Machine & Course */}
@@ -116,19 +130,13 @@ const PaymentQR = ({navigation}) => {
             {machineValue?.icon} {machineValue?.capacity}
           </Text>
         </View>
-        <View
-          style={{
-            backgroundColor: '#ccc',
-            width: '85%',
-            paddingVertical: 5,
-            marginTop: 10,
-          }}>
+        <View style={styles.courseContainer}>
           {courseValue.id == 4 ? (
-            <Text style={[styles.selectedText, {fontSize: 16}]}>
-              {courseValue?.title} - <Text style={{ backgroundColor: '#eee',}}>{usingTimeValue.time}</Text> - {usingTimeValue.price}
+            <Text style={[styles.selectedText, styles.courseText]}>
+              {courseValue?.title} - <Text style={styles.usingTimeText}>{usingTimeValue.time}</Text> - {usingTimeValue.price}
             </Text>
           ) : (
-            <Text style={[styles.selectedText, {fontSize: 16}]}>
+            <Text style={[styles.selectedText, styles.courseText]}>
               {courseValue?.title} - {courseValue.time} - {courseValue.price}
             </Text>
           )}
@@ -138,9 +146,7 @@ const PaymentQR = ({navigation}) => {
       <View style={styles.header}>
         <Text style={styles.headerText}>{StringConst.makePayment}</Text>
         <View style={[styles.paymentButton, styles.selectedPaymentButton]}>
-          <Text style={[styles.paymentText]}>
-            {paymentValue.name}
-          </Text>
+          <Text style={styles.paymentText}>{paymentValue.name}</Text>
         </View>
       </View>
 
@@ -151,9 +157,7 @@ const PaymentQR = ({navigation}) => {
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : paymentStatus === 'EXPIRED' || paymentStatus === 'CANCELED' ? (
-          <Text style={styles.errorText}>
-           {StringConst.paymentExpired}
-          </Text>
+          <Text style={styles.errorText}>{StringConst.paymentExpired}</Text>
         ) : qrCodeData ? (
           <QRCode value={qrCodeData} size={250} />
         ) : (
@@ -165,7 +169,14 @@ const PaymentQR = ({navigation}) => {
 
       {paymentStatus === 'EXPIRED' && (
         <TouchableOpacity style={styles.retryButton} onPress={initiatePayment}>
-          <Text style={styles.retryButtonText}>{StringConst.paymentRetry  }</Text>
+          <Text style={styles.retryButtonText}>{StringConst.paymentRetry}</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Operate Machine Button */}
+      {showOperateButton && (
+        <TouchableOpacity style={styles.operateButton} onPress={handleDeviceStart}>
+          <Text style={styles.operateButtonText}>Operate Machine</Text>
         </TouchableOpacity>
       )}
 
@@ -182,32 +193,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
   },
-  selectedContainer: {
-    width: '100%',
-    backgroundColor: '#f8f9fa',
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
+  selectedStyle: {
+    width: '93%',
+    paddingVertical: 25,
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 20,
+    backgroundColor: '#eee',
   },
-  machineIcon: {
+  selectedRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
+  },
+  selectedText: {
+    fontSize: 18,
+    fontWeight: '400',
+    color: '#000',
+    textAlign: 'center',
+  },
+  courseContainer: {
     backgroundColor: '#ccc',
+    width: '85%',
     paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#2c3e50',
-    marginRight: 5,
+    marginTop: 10,
   },
   courseText: {
     fontSize: 16,
-    color: '#34495e',
-    fontWeight: '600',
-    marginTop: 5,
+  },
+  usingTimeText: {
+    backgroundColor: '#eee',
   },
   header: {
     marginTop: 20,
@@ -251,7 +266,6 @@ const styles = StyleSheet.create({
   },
   selectedPaymentButton: {
     backgroundColor: '#fff',
-    borderWidth: 1,
   },
   retryButton: {
     backgroundColor: '#e74c3c',
@@ -265,24 +279,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
-  selectedStyle: {
-    width: '93%',
-    paddingVertical: 25,
-    alignItems: 'center',
-    marginTop: 40,
-    marginBottom: 20,
-    backgroundColor: '#eee',
+  operateButton: {
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: '#3498db',
+    borderRadius: 8,
   },
-  selectedRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '90%',
-  },
-  selectedText: {
-    fontSize: 18,
-    fontWeight: '400',
-    color: '#000000',
+  operateButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
     textAlign: 'center',
+  },
+  paymentText: {
+    fontSize: 16,
+    color: '#000',
   },
 });
 
