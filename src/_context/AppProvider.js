@@ -12,28 +12,6 @@ export const AppProvider = ({ children }) => {
   const [usingTimeValue, setUsingTimeValue] = useState({});
   const [authToken, setAuthToken] = useState(null);
 
-  // API function to get a token (via POST)
-  const getToken = async (username, password) => {
-    try {
-      const response = await fetch('https://api.example.com/auth/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch token');
-      }
-      const data = await response.json();
-      // Assuming the token is returned as: { token: "YOUR_TOKEN" }
-      return data.token;
-    } catch (error) {
-      console.error('Error fetching token:', error);
-      throw error;
-    }
-  };
-
   return (
     <AppContext.Provider
       value={{
@@ -50,7 +28,6 @@ export const AppProvider = ({ children }) => {
         setCourseValue,
         setPaymentValue,
         // API functions
-        getToken,
         authToken,
         setAuthToken
       }}
