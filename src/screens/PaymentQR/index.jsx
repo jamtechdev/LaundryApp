@@ -13,25 +13,30 @@ import {useAppContext} from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import RouteName from '../../utils/Constant';
 import StringConst from '../../utils/StringConstant';
+import FooterText from '../../components/FooterText';
 
 const PaymentQR = ({navigation}) => {
-  const {appliancesValue, machineValue, courseValue, paymentValue} =
+  const {appliancesValue, machineValue, courseValue, paymentValue, usingTimeValue} =
     useAppContext();
 
   const [qrCodeData, setQrCodeData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [paymentId, setPaymentId] = useState(null);
+  const [payment, setPayment] = useState(null);
 
   useEffect(() => {
-    initiatePayment();
+    // initiatePayment();
+    setTimeout(() => {
+      navigation.replace(RouteName.Completion_Screen);
+    }, 4000);
   }, []);
 
   useEffect(() => {
     let interval;
 
     if (paymentId) {
-      interval = setInterval(checkPaymentStatus, 10000); // Poll every 4 seconds
+      interval = setInterval(checkPaymentStatus, 15000); // Poll every 4 seconds
     }
 
     return () => {
@@ -45,7 +50,6 @@ const PaymentQR = ({navigation}) => {
         'http://localhost:3000/paypay', // Your backend API
         {
           amount: courseValue.price, // Use course price as payment amount
-          userId: 'USER123',
         },
       );
 
@@ -57,15 +61,16 @@ const PaymentQR = ({navigation}) => {
         response.data.paymentId
       ) {
         setQrCodeData(response.data.paymentUrl);
+        setPayment(response.data.payment)
         setPaymentId(response.data.paymentId); // Store paymentId for status check
       } else {
         Alert.alert('Payment Error', 'Invalid API response.');
-        navigation.goBack();
+        // navigation.goBack();
       }
     } catch (error) {
       console.error('Payment API Error:', error);
       Alert.alert('Payment Error', 'Failed to fetch QR code.');
-      navigation.goBack();
+      // navigation.goBack();
     } finally {
       setLoading(false);
     }
@@ -76,7 +81,7 @@ const PaymentQR = ({navigation}) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:3000/paypay/status/${paymentId}`,
+        `http://localhost:3000/paypay/status/${payment.codeId}`,
       );
 
       console.log('Payment Status Response:', response.data);
@@ -104,25 +109,36 @@ const PaymentQR = ({navigation}) => {
   return (
     <View style={styles.container}>
       {/* Selected Appliance, Machine & Course */}
-      <View style={styles.selectedContainer}>
-        <Text style={styles.selectedText}>
-          {appliancesValue.icon} {appliancesValue.name}
-        </Text>
-        <View style={styles.machineContainer}>
-          <Text style={styles.machineIcon}>
-            {machineValue.icon} {machineValue.capacity}
+      <View style={styles.selectedStyle}>
+        <View style={styles.selectedRow}>
+          <Text style={styles.selectedText}>{appliancesValue?.name}</Text>
+          <Text style={styles.selectedText}>
+            {machineValue?.icon} {machineValue?.capacity}
           </Text>
         </View>
-        <Text style={styles.courseText}>{courseValue.title}</Text>
-        <Text style={styles.courseText}>
-          • {courseValue.time} • ¥{courseValue.price}
-        </Text>
+        <View
+          style={{
+            backgroundColor: '#ccc',
+            width: '85%',
+            paddingVertical: 5,
+            marginTop: 10,
+          }}>
+          {courseValue.id == 4 ? (
+            <Text style={[styles.selectedText, {fontSize: 16}]}>
+              {courseValue?.title} - <Text style={{ backgroundColor: '#eee',}}>{usingTimeValue.time}</Text> - {usingTimeValue.price}
+            </Text>
+          ) : (
+            <Text style={[styles.selectedText, {fontSize: 16}]}>
+              {courseValue?.title} - {courseValue.time} - {courseValue.price}
+            </Text>
+          )}
+        </View>
       </View>
 
       <View style={styles.header}>
         <Text style={styles.headerText}>{StringConst.makePayment}</Text>
         <View style={[styles.paymentButton, styles.selectedPaymentButton]}>
-          <Text style={[styles.paymentText, styles.selectedPaymentText]}>
+          <Text style={[styles.paymentText]}>
             {paymentValue.name}
           </Text>
         </View>
@@ -136,12 +152,12 @@ const PaymentQR = ({navigation}) => {
           <ActivityIndicator size="large" color="#0000ff" />
         ) : paymentStatus === 'EXPIRED' || paymentStatus === 'CANCELED' ? (
           <Text style={styles.errorText}>
-            Payment Expired. Please try again.
+           {StringConst.paymentExpired}
           </Text>
         ) : qrCodeData ? (
           <QRCode value={qrCodeData} size={250} />
         ) : (
-          <Text style={styles.errorText}>Error loading QR code</Text>
+          <Text style={styles.errorText}>{StringConst.paymentError}</Text>
         )}
       </View>
 
@@ -149,11 +165,12 @@ const PaymentQR = ({navigation}) => {
 
       {paymentStatus === 'EXPIRED' && (
         <TouchableOpacity style={styles.retryButton} onPress={initiatePayment}>
-          <Text style={styles.retryButtonText}>Retry Payment</Text>
+          <Text style={styles.retryButtonText}>{StringConst.paymentRetry  }</Text>
         </TouchableOpacity>
       )}
 
       <ActionButtons />
+      <FooterText />
     </View>
   );
 };
@@ -176,11 +193,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 20,
   },
-  selectedText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-  },
   machineIcon: {
     backgroundColor: '#ccc',
     paddingVertical: 5,
@@ -198,21 +210,23 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   header: {
-    marginVertical: 5,
+    marginTop: 20,
+    marginBottom: 15,
     paddingVertical: 10,
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
   },
   headerText: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#3498db',
+    fontWeight: '400',
+    color: '#222',
     textAlign: 'center',
   },
   qrText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#34495e',
+    fontSize: 15,
+    fontWeight: '400',
+    color: '#222',
     textAlign: 'center',
     marginTop: 10,
   },
@@ -229,15 +243,15 @@ const styles = StyleSheet.create({
   paymentButton: {
     borderWidth: 1,
     marginTop: 20,
-    borderColor: '#2ecc71',
+    borderColor: '#444',
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 8,
     alignItems: 'center',
   },
   selectedPaymentButton: {
-    backgroundColor: '#2ecc71',
-    borderWidth: 2,
+    backgroundColor: '#fff',
+    borderWidth: 1,
   },
   retryButton: {
     backgroundColor: '#e74c3c',
@@ -250,6 +264,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  selectedStyle: {
+    width: '93%',
+    paddingVertical: 25,
+    alignItems: 'center',
+    marginTop: 40,
+    marginBottom: 20,
+    backgroundColor: '#eee',
+  },
+  selectedRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
+  },
+  selectedText: {
+    fontSize: 18,
+    fontWeight: '400',
+    color: '#000000',
+    textAlign: 'center',
   },
 });
 

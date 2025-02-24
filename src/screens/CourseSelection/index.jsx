@@ -10,23 +10,28 @@ import RouteName from '../../utils/Constant';
 import StringConst from '../../utils/StringConstant';
 import {useAppContext} from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
+import FooterText from '../../components/FooterText';
 
 const { width } = Dimensions.get('window');
 
 const CourseSelection = ({ navigation }) => {
-  const { appliancesValue, machineValue, setCourseValue } = useAppContext();
+  const { appliancesValue, machineValue, setCourseValue , courseValue} = useAppContext();
 
   const washingOptions = [
-    { id: 1, title: "Plenty of washing and drying", capacity: "15kg", time: "60 min", price: "1200 yen" },
-    { id: 2, title: "Light wash and dry", capacity: "11kg", time: "50 min", price: "1000 yen" },
-    { id: 3, title: "Washing only", capacity: "15kg", time: "20 min", price: "700 yen" },
-    { id: 4, title: "Dry only", capacity: "11kg", time: "Per 10 minutes", price: "100 yen" },
+    { id: 1, title: StringConst.courseOne,  capacity: "15"+ StringConst.kg, time: "60 "+StringConst.min, price: "1200 "+ StringConst.yen },
+    { id: 2, title: StringConst.courseTwo,  capacity: "11"+ StringConst.kg, time: "50 "+StringConst.min, price: "1000 "+ StringConst.yen },
+    { id: 3, title:StringConst.courseThree, capacity: "15"+ StringConst.kg, time: "20 "+StringConst.min, price: "700 " + StringConst.yen},
+    { id: 4, title: StringConst.courseFour, capacity: "11"+ StringConst.kg, time: "10 "+StringConst.minutes, price: "100 " + StringConst.yen},
   ];
 
   const handleMachinesClick = (item) => {
     if (item) {
       setCourseValue(item);
-      navigation.navigate(RouteName.Payment_Selection);
+      if(item.id == 4){
+        navigation.navigate(RouteName.Time_Range_Selection);
+      }else{
+        navigation.navigate(RouteName.Payment_Selection);
+      }
     }
   };
 
@@ -34,12 +39,14 @@ const CourseSelection = ({ navigation }) => {
     <View style={styles.container}>
       {/* Selected Appliances & Machines */}
       <View style={styles.selectedStyle}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', width : '90%'}}>
         <Text style={[styles.selectedText]}>
-          {appliancesValue.icon} {appliancesValue.name}
+           {appliancesValue.name}
         </Text>
         <Text style={[styles.selectedText]}>
           {machineValue.icon} {machineValue.capacity}
         </Text>
+      </View>
       </View>
 
       {/* Header */}
@@ -51,14 +58,14 @@ const CourseSelection = ({ navigation }) => {
         {washingOptions.map((option) => (
           <TouchableOpacity
             key={option.id}
-            style={[styles.fullWidthButton, styles.secondaryButton]}
+            style={[styles.fullWidthButton,courseValue.id == option.id ? styles.tertiaryButton: styles.secondaryButton]}
             onPress={() => handleMachinesClick(option)}
           >
             <View style={styles.textContainer}>
               <Text style={styles.title}>{option.title}</Text>
             </View>
             <View style={styles.detailsContainer}>
-              <Text style={styles.price}>({option.capacity})</Text>
+              <Text style={styles.priceTime}>{option.time}</Text>
             </View>
             <View style={styles.detailsContainer}>
               <Text style={styles.price}>{option.price}</Text>
@@ -69,6 +76,8 @@ const CourseSelection = ({ navigation }) => {
 
       <View style={styles.spacer} />
       <ActionButtons />
+
+      <FooterText />
     </View>
   );
 };
@@ -93,8 +102,8 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#3498db',
+    fontWeight: '400',
+    color: '#222',
     textAlign: 'center',
   },
   applianceContainer: {
@@ -110,20 +119,17 @@ const styles = StyleSheet.create({
   },
   selectedStyle: {
     width: '100%',
-    paddingVertical: 15,
-    borderRadius: 10,
-    borderColor: '#3498db',
-    borderWidth: 2,
+    paddingVertical: 25,
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 20,
-    backgroundColor: '#ecf5ff',
+    backgroundColor: '#eee',
   },
   selectedText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#34495e',
-    marginBottom: 5,
+    fontSize: 18,
+    fontWeight: '400',
+    color: '#000000',
+    textAlign: 'center',
   },
   fullWidthButton: {
     width: '100%',
@@ -140,26 +146,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#3498db',
   },
   secondaryButton: {
-    backgroundColor: '#2ecc71',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#999'
   },
   tertiaryButton: {
-    backgroundColor: '#e67e22',
+    backgroundColor: '#ccc',
+    borderWidth: 1,
+    borderColor: '#444'
   },
   buttonText: {
     fontSize: 16,
     color: '#ffffff',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: '#2c3e50',
   },
   price: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: '#34495e',
   },
+  priceTime: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: '#34495e',
+      backgroundColor: '#eee',
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+    },
   spacer: {
     height: 20,
   },

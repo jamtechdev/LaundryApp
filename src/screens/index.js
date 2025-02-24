@@ -5,3 +5,5 @@ export {default as CourseSelection} from './CourseSelection';
 export {default as PaymentSelection} from './PaymentSelection';
 export {default as PaymentQR} from './PaymentQR';
 export {default as CompletionScreen} from './CompletionScreen';
+export {default as TimeRangeScreen} from './TimeRangeScreen';
+export {default as UsageTimeScreen} from './UsageTimeScreen';

@@ -29,6 +29,17 @@ const StringConst = {
     seconds: 'seconds',
     return: 'Return',
     cancel: 'Cancel',
+    min:'min',
+    timeRangeHeading:'Please select the usage time range',
+    usingTimeHeading:'Please select your usage time',
+    footerText: 'LaundryPay Smart',
+    paymentExpired:' Payment Expired. Please try again.',
+    paymentError:' Error loading QR code',
+    paymentRetry:' Retry Payment',
+    yen:'yen',
+    kg:'kg',
+    to:' to ',
+    minutes:'minutes'
 };
 
 export default StringConst

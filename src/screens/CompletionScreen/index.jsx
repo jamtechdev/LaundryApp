@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import StringConst from '../../utils/StringConstant';
 import RouteName from '../../utils/Constant';
+import FooterText from '../../components/FooterText';
 
 const CompletionScreen = ({ navigation }) => {
   useEffect(() => {
@@ -25,7 +26,8 @@ const CompletionScreen = ({ navigation }) => {
 
       <Text style={styles.timerText}>{StringConst.completionNote} 30 {StringConst.seconds}</Text>
       
-      <Text style={styles.footerText}>LaundryPay Smart</Text>
+ 
+      <FooterText />
     </View>
   );
 };
@@ -45,7 +47,7 @@ const styles = StyleSheet.create({
   },
   button: { 
     borderWidth: 1, 
-    borderColor: '#000', 
+    borderColor: '#444', 
     paddingVertical: 12, 
     paddingHorizontal: 25, 
     borderRadius: 8, 
@@ -53,8 +55,7 @@ const styles = StyleSheet.create({
   },
   buttonText: { 
     fontSize: 16, 
-    color: '#000', 
-    fontWeight: 'bold' 
+    color: '#444', 
   },
   timerText: { 
     fontSize: 14, 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,44 +8,60 @@ import {
 } from 'react-native';
 import RouteName from '../../utils/Constant';
 import StringConst from '../../utils/StringConstant';
-import { useAppContext } from '../../_context/AppProvider';
+import {useAppContext} from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
+import FooterText from '../../components/FooterText';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
-const PaymentSelection = ({ navigation }) => {
-  const { appliancesValue, machineValue, courseValue, setPaymentValue } =
-    useAppContext();
+const PaymentSelection = ({navigation}) => {
+  const {
+    appliancesValue,
+    machineValue,
+    courseValue,
+    setPaymentValue,
+    timeRangeValue,
+    usingTimeValue,
+  } = useAppContext();
 
   const paymentMethods = [
-    { id: 1, name: StringConst.paypay },
-    { id: 2, name: StringConst.aupay },
-    { id: 3, name: StringConst.dPayment },
-    { id: 4, name: StringConst.rpay },
+    {id: 1, name: StringConst.paypay},
+    {id: 2, name: StringConst.aupay},
+    {id: 3, name: StringConst.dPayment},
+    {id: 4, name: StringConst.rpay},
   ];
 
-
-  const handlePaymentClick = (option) => {
+  const handlePaymentClick = option => {
     setPaymentValue(option);
     navigation.navigate(RouteName.Payment_QR);
   };
 
   return (
     <View style={styles.container}>
-      {/* Selected Appliance, Machine & Course */}
-      <View style={styles.selectedContainer}>
-        <Text style={styles.selectedText}>
-          {appliancesValue.icon} {appliancesValue.name}
-        </Text>
-        <View style={styles.machineContainer}>
-          <Text style={styles.machineIcon}>{machineValue.icon} {machineValue.capacity}</Text>
+      <View style={styles.selectedStyle}>
+        <View style={styles.selectedRow}>
+          <Text style={styles.selectedText}>{appliancesValue?.name}</Text>
+          <Text style={styles.selectedText}>
+            {machineValue?.icon} {machineValue?.capacity}
+          </Text>
         </View>
-        <Text style={styles.courseText}>
-          {courseValue.title} 
-        </Text>
-        <Text style={styles.courseText}>
-        • {courseValue.time} • {courseValue.price}
-        </Text>
+        <View
+          style={{
+            backgroundColor: '#ccc',
+            width: '85%',
+            paddingVertical: 5,
+            marginTop: 10,
+          }}>
+          {courseValue.id == 4 ? (
+            <Text style={[styles.selectedText, {fontSize: 16}]}>
+              {courseValue?.title} - <Text style={{ backgroundColor: '#eee',}}>{usingTimeValue.time}</Text> - {usingTimeValue.price}
+            </Text>
+          ) : (
+            <Text style={[styles.selectedText, {fontSize: 16}]}>
+              {courseValue?.title} - {courseValue.time} - {courseValue.price}
+            </Text>
+          )}
+        </View>
       </View>
 
       <View style={styles.header}>
@@ -53,21 +69,12 @@ const PaymentSelection = ({ navigation }) => {
       </View>
 
       <View style={styles.paymentContainer}>
-        {paymentMethods.map((option) => (
+        {paymentMethods.map(option => (
           <TouchableOpacity
             key={option.id}
             onPress={() => handlePaymentClick(option)}
-            style={[
-              styles.paymentButton,
-             styles.selectedPaymentButton
-            ]}
-          >
-            <Text 
-              style={[
-                styles.paymentText,
-             styles.selectedPaymentText
-              ]}
-            >
+            style={[styles.paymentButton, styles.selectedPaymentButton]}>
+            <Text style={[styles.paymentText, styles.selectedPaymentText]}>
               {option.name}
             </Text>
           </TouchableOpacity>
@@ -75,6 +82,7 @@ const PaymentSelection = ({ navigation }) => {
       </View>
 
       <ActionButtons />
+      <FooterText />
     </View>
   );
 };
@@ -99,11 +107,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 20,
   },
-  selectedText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-  },
   machineIcon: {
     backgroundColor: '#ccc',
     paddingVertical: 5,
@@ -127,37 +130,56 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   headerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#3498db',
-    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '500',
+    marginBottom: 20,
+    color: '#000',
   },
   paymentContainer: {
     width: '100%',
     alignItems: 'center',
     marginTop: 10,
     flexDirection: 'row',
-    justifyContent:'space-between',
-    paddingHorizontal: 10
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
   },
   paymentButton: {
     borderWidth: 1,
-    borderColor: '#2ecc71',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    borderColor: '#ccc',
+    paddingVertical: 20,
+    paddingHorizontal: 13,
     borderRadius: 8,
     alignItems: 'center',
   },
   selectedPaymentButton: {
-    backgroundColor: '#2ecc71',
+    backgroundColor: '#fff',
     borderWidth: 2,
   },
   paymentText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '400',
     color: '#2c3e50',
   },
   selectedPaymentText: {
     color: '#2c3e50',
+  },
+  selectedStyle: {
+    width: '93%',
+    paddingVertical: 25,
+    alignItems: 'center',
+    marginTop: 40,
+    marginBottom: 20,
+    backgroundColor: '#eee',
+  },
+  selectedRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
+  },
+  selectedText: {
+    fontSize: 18,
+    fontWeight: '400',
+    color: '#000000',
+    textAlign: 'center',
   },
 });

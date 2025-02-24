@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import RouteName from '../utils/Constant';
+import StringConst from '../utils/StringConstant';
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,11 +24,13 @@ const ActionButtons = () => {
   return (
     <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.returnButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>🔙 Return</Text>
+        <Text style={styles.buttonText}>🔙 </Text>
+        <Text style={styles.buttonText}>{StringConst.return} </Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-        <Text style={styles.buttonText}>❌ Cancel</Text>
+        <Text style={styles.buttonTextX}>X</Text>
+        <Text style={styles.buttonTextCancel}>{StringConst.cancel}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -38,36 +41,57 @@ export default ActionButtons;
 const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
-    bottom: 15, // Fix at the bottom
+    bottom: 55, // Fix at the bottom
     left: 0,
     right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 25,
-    backgroundColor: '#f8f9fa',
-    borderTopWidth: 1,
-    borderTopColor: '#d1d1d1',
+    backgroundColor: '#fff',
     width: width, // Ensure full width
   },
   returnButton: {
     flex: 1,
-    backgroundColor: '#3498db',
+    backgroundColor: '#fff',
     paddingVertical: 14,
+    paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: 'center',
     marginRight: 10,
+    borderColor: '#444',
+    borderWidth: 1,
+    flexDirection: 'row',
+    width: '80%',
+    justifyContent: 'space-between'
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#e74c3c',
+    backgroundColor: '#ccc',
     paddingVertical: 14,
+    paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: 'center',
+    marginRight: 10,
+    borderColor: '#444',
+    borderWidth: 1,
+    flexDirection: 'row',
+    width: '80%',
+    justifyContent: 'space-between'
   },
   buttonText: {
     fontSize: 16,
-    color: '#ffffff',
-    fontWeight: 'bold',
+    color: '#444',
   },
+  buttonTextCancel: {
+    fontSize: 16,
+    color: '#000',
+  },
+  buttonTextX:{
+    backgroundColor: '#fff',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 5,
+    fontWeight: 'bold'
+  }
 });
