@@ -51,14 +51,6 @@ const ApplianceScreen = ({navigation}) => {
         const authResponse = await deviceService.getAuthToken();
         const token = authResponse.data.access_token;
         setAuthToken(token);
-        const token = 'your_oauth_token_here';
-
-        // Query by device ID
-        deviceService.getLandryDeviceListwithDeviceId('000010000001', token)
-          .then(response => {
-            console.log('Device List by Device ID:', response.data);
-          })
-          .catch(error => console.error(error));
 
         // Query by shop id
         const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00001999988', token)
