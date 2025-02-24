@@ -1,0 +1,69 @@
+import axios from 'axios';
+
+const API_BASE_URL = 'https://laundry-pay.net/admin/api/data';
+const OAUTH_TOKEN_URL = 'https://laundry-pay.net/admin/oauth/token';
+
+const deviceService = {
+    getAuthToken,
+    getLandryDeviceListwithShop,
+    getLandryDeviceListwithDeviceId,
+};
+
+export default deviceService;
+
+/**
+ * Retrieves the OAuth token using the API key grant.
+ */
+function getAuthToken() {
+    const data = {
+        grant_type: 'api_key',
+        client_id: '8ed997b0-e793-11ec-9db7-abf499082fd3',
+        client_secret: 'XToSWyMcV18PsDaV17bfq0tmnbg44b4GSXwYbnZg',
+        api_key: 'key_vOBOw7eF93gYEVdGilEKHcDfBFthvL',
+        scope: 'table_read value_read value_write view_read plugin'
+    };
+
+    return axios.post(OAUTH_TOKEN_URL, data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+}
+
+/**
+ * Retrieves the Landry Device List using the deviceId.
+ * 
+ * @param {string|number} deviceId - The device id to query.
+ * @param {string} token - The bearer token for authorization.
+ */
+function getLandryDeviceListwithDeviceId(deviceId, token) {
+    const url = `${API_BASE_URL}/LandryDeviceList/query-column`;
+    const params = { q: `deviceid eq ${deviceId}` };
+
+    return axios.get(url, {
+        headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`
+        },
+        params
+    });
+}
+
+/**
+ * Retrieves the Landry Device List using the shop id.
+ * 
+ * @param {string|number} shopId - The shop id to query.
+ * @param {string} token - The bearer token for authorization.
+ */
+function getLandryDeviceListwithShop(shopId, token) {
+    const url = `${API_BASE_URL}/LandryDeviceList/query-column`;
+    const params = { q: `shop eq ${shopId}` };
+
+    return axios.get(url, {
+        headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`
+        },
+        params
+    });
+}

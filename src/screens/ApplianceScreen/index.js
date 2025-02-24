@@ -11,11 +11,12 @@ import StringConst from '../../utils/StringConstant';
 import {useAppContext} from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import FooterText from '../../components/FooterText';
+import deviceService from '../../_services/device.service';
 
 const {width} = Dimensions.get('window');
 
 const ApplianceScreen = ({navigation}) => {
-  const {setAppliancesValue, getToken, getDevices, getDeviceCourses} = useAppContext();
+  const {setAppliancesValue, setAuthToken} = useAppContext();
   const appliances = [
     {
       id: 1,
@@ -47,12 +48,23 @@ const ApplianceScreen = ({navigation}) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = await getToken('testuser', 'secret123');
-        console.log('Token:', token);
-        const devices = await getDevices(token);
-        console.log('Filtered Devices:', devices);
-        const courses = await getDeviceCourses(token);
-        console.log('Device Courses:', courses);
+        const authResponse = await deviceService.getAuthToken();
+        const token = authResponse.data.access_token;
+        setAuthToken(token);
+        const token = 'your_oauth_token_here';
+
+        // Query by device ID
+        deviceService.getLandryDeviceListwithDeviceId('000010000001', token)
+          .then(response => {
+            console.log('Device List by Device ID:', response.data);
+          })
+          .catch(error => console.error(error));
+
+        // Query by shop id
+        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('000010000001', token)
+        const deviceShopResponse = await deviceService.getLandryDeviceListwithShop(1, token)
+        console.log(deviceIdResponse,'Device List by Shop ID:', deviceShopResponse);
+
       } catch (error) {
         console.error('Error in API calls:', error);
       }
