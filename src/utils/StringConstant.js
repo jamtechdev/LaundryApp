@@ -39,7 +39,8 @@ const StringConst = {
     yen:'yen',
     kg:'kg',
     to:' to ',
-    minutes:'minutes'
+    minutes:'minutes',
+    deviceOperate : 'Start Device',
 };
 
 export default StringConst

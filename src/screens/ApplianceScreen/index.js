@@ -53,7 +53,7 @@ const ApplianceScreen = ({navigation}) => {
         setAuthToken(token);
 
         // Query by shop id
-        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00001999988', token)
+        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00001999987', token)
         const deviceShopResponse = await deviceService.getLandryDeviceListwithShop(1, token)
         console.log(deviceIdResponse,'Device List by Shop ID:', deviceShopResponse);
 

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+const PAYMENT_API_URL = 'https://admin.reinarancy.com';
 const API_BASE_URL = 'https://laundry-pay.net/admin/api';
 const OAUTH_TOKEN_URL = 'https://laundry-pay.net/admin/oauth/token';
 
@@ -7,7 +8,9 @@ const deviceService = {
     getAuthToken,
     getLandryDeviceListwithShop,
     getLandryDeviceListwithDeviceId,
-    startDevice
+    startDevice,
+    initiatePayment,
+    checkPaymentStatus
 };
 
 export default deviceService;
@@ -79,13 +82,35 @@ function getLandryDeviceListwithShop(shopId, token) {
  * @param {string} token - The bearer token for authorization.
  * @returns {Promise} - Axios promise.
  */
-function startDevice(deviceId ='00001999988', salesAmount, token) {
+function startDevice(deviceId ='00001999987', salesAmount, token) {
     const url = `${API_BASE_URL}/plugins/devicestart/exec/${deviceId}/${salesAmount}`;
-
-    return axios.post(url, null, {
+    console.log(url)
+    return axios.get(url, {
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${token}`
         }
     });
 }
+
+/**
+ * Initiates a payment by posting the payment amount.
+ *
+ * @param {number|string} amount - The payment amount.
+ * @returns {Promise} - Axios promise resolving with the payment response.
+ */
+function initiatePayment(amount) {
+    const url = `${PAYMENT_API_URL}/paypay`;
+    return axios.post(url, { amount });
+};
+
+/**
+ * Checks the status of a payment using its codeId.
+ *
+ * @param {string} codeId - The codeId of the payment.
+ * @returns {Promise} - Axios promise resolving with the payment status response.
+ */
+function checkPaymentStatus(codeId) {
+    const url = `${PAYMENT_API_URL}/paypay/status/${codeId}`;
+    return axios.get(url);
+};
