@@ -78,17 +78,11 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // curl -X POST "https://laundry-pay.net/admin/oauth/token" \
-  //    -H "Content-Type: application/json" \
-  //    -d '{
-  //          "grant_type": "api_key",
-  //          "client_id": "8ed997b0-e793-11ec-9db7-abf499082fd3",
-  //          "client_secret": "XToSWyMcV18PsDaV17bfq0tmnbg44b4GSXwYbnZg",
-  //          "api_key": "key_vOBOw7eF93gYEVdGilEKHcDfBFthvL",
-  //          "scope": "table_read value_read value_write view_read plugin"
-  //        }'
+
+  // curl -X GET "https://laundry-pay.net/admin/api/data/LandryDeviceList/query-column?q=shop%20eq%201" -H "Accept: application/json"
 
 
+  // curl -X GET "https://laundry-pay.net/admin/api/data/LandryDeviceList/query-column?q=deviceid%20eq%2000001000001" -H "Accept: application/json"
 
   return (
     <AppContext.Provider
