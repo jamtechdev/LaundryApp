@@ -16,7 +16,7 @@ import deviceService from '../../_services/device.service';
 const {width} = Dimensions.get('window');
 
 const ApplianceScreen = ({navigation}) => {
-  const {setAppliancesValue, setAuthToken} = useAppContext();
+  const {setAppliancesValue, setAuthToken,  courseList, setCourseList} = useAppContext();
   const appliances = [
     {
       id: 1,
@@ -44,7 +44,7 @@ const ApplianceScreen = ({navigation}) => {
     },
   ];
 
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -53,9 +53,11 @@ const ApplianceScreen = ({navigation}) => {
         setAuthToken(token);
 
         // Query by shop id
-        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00087000003', token)
         const deviceShopResponse = await deviceService.getLandryDeviceListwithShop(87, token)
-        console.log(deviceIdResponse,'Device List by Shop ID:',deviceShopResponse);
+        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00087000001', token)
+        const coursedResponse = await deviceService.getLandryDeviceCourseList('00087000001', token)
+        setCourseList(coursedResponse.data.data)
+        console.log(deviceIdResponse,'Device List by Shop ID:',deviceShopResponse,coursedResponse);
 
       } catch (error) {
         console.error('Error in API calls:', error);
@@ -115,7 +117,7 @@ const ApplianceScreen = ({navigation}) => {
       </TouchableOpacity>
 
       {/* Payment methods heading */}
-      <Text style={styles.paymentHeading}>Available payment methods</Text>
+      <Text style={styles.paymentHeading}>利用可能な支払い方法</Text>
 
       {/* Payment buttons row */}
       <View style={styles.paymentRow}>

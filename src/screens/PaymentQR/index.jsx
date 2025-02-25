@@ -15,6 +15,7 @@ import RouteName from '../../utils/Constant';
 import StringConst from '../../utils/StringConstant';
 import FooterText from '../../components/FooterText';
 import deviceService from '../../_services/device.service';
+import PayPayQRCode from '../../components/PayPayQRCode';
 
 const PaymentQR = ({navigation}) => {
   const { appliancesValue, machineValue, courseValue, paymentValue, usingTimeValue, authToken } =
@@ -106,6 +107,7 @@ const PaymentQR = ({navigation}) => {
   try {
     const response = await deviceService.startDevice('00001999987', courseValue.price, authToken);
     console.log(response)
+    navigation.replace(RouteName.Completion_Screen);
   } catch (error) {
     console.error('Error starting device:', error);
     
@@ -140,7 +142,6 @@ const PaymentQR = ({navigation}) => {
           )}
         </View>
       </View>
-
       <View style={styles.header}>
         <Text style={styles.headerText}>{StringConst.makePayment}</Text>
         <View style={[styles.paymentButton, styles.selectedPaymentButton]}>
@@ -149,9 +150,13 @@ const PaymentQR = ({navigation}) => {
           </Text>
         </View>
       </View>
-
+      {/* <PayPayQRCode /> */}
       <Text style={styles.qrText}>{StringConst.scanWithDevice}</Text>
-
+      {showBtn && (
+        <TouchableOpacity style={styles.retryButton} onPress={handleDeviceStart}>
+          <Text style={styles.retryButtonText}>{StringConst.deviceOperate}</Text>
+        </TouchableOpacity>
+      )}
       {/* QR Code or Payment Status Message */}
       <View style={styles.qrContainer}>
         {loading ? (
@@ -161,7 +166,7 @@ const PaymentQR = ({navigation}) => {
            {StringConst.paymentExpired}
           </Text>
         ) : qrCodeData ? (
-          <QRCode value={qrCodeData} size={250} />
+          <QRCode value={qrCodeData} size={150} />
         ) : (
           <Text style={styles.errorText}>{StringConst.paymentError}</Text>
         )}
@@ -174,11 +179,7 @@ const PaymentQR = ({navigation}) => {
           <Text style={styles.retryButtonText}>{StringConst.paymentRetry  }</Text>
         </TouchableOpacity>
       )}
-      {showBtn && (
-        <TouchableOpacity style={styles.retryButton} onPress={initiatePayment}>
-          <Text style={styles.retryButtonText}>{StringConst.deviceOperate}</Text>
-        </TouchableOpacity>
-      )}
+     
 
       <ActionButtons />
       <FooterText />

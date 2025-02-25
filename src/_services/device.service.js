@@ -10,7 +10,8 @@ const deviceService = {
     getLandryDeviceListwithDeviceId,
     startDevice,
     initiatePayment,
-    checkPaymentStatus
+    checkPaymentStatus,
+    getLandryDeviceCourseList
 };
 
 export default deviceService;
@@ -40,6 +41,7 @@ function getAuthToken() {
  * @param {string|number} deviceId - The device id to query.
  * @param {string} token - The bearer token for authorization.
  */
+
 function getLandryDeviceListwithDeviceId(deviceId, token) {
     const url = `${API_BASE_URL}/data/LandryShopDeviceList/query-column`;
     const params = { q: `deviceid eq ${deviceId}` };
@@ -62,6 +64,26 @@ function getLandryDeviceListwithDeviceId(deviceId, token) {
 function getLandryDeviceListwithShop(shopId, token) {
     const url = `${API_BASE_URL}/data/LandryShopDeviceList/query-column`;
     const params = { q: `shop eq ${shopId}` };
+
+    return axios.get(url, {
+        headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`
+        },
+        params
+    });
+}
+
+
+/**
+ * Retrieves the Landry Device List using the shop id.
+ * 
+ * @param {string|number} shopId - The shop id to query.
+ * @param {string} token - The bearer token for authorization.
+ */
+function getLandryDeviceCourseList(shopId, token) {
+    const url = `${API_BASE_URL}/data/LandryDeviceCourceList/query-column`;
+    const params = { q: `deviceid eq ${shopId}` };
 
     return axios.get(url, {
         headers: {

@@ -12,41 +12,75 @@ import {useAppContext} from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import FooterText from '../../components/FooterText';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
-const CourseSelection = ({ navigation }) => {
-  const { appliancesValue, machineValue, setCourseValue , courseValue} = useAppContext();
+const CourseSelection = ({navigation}) => {
+  const {
+    appliancesValue,
+    machineValue,
+    setCourseValue,
+    courseValue,
+    courseList,
+  } = useAppContext();
 
   const washingOptions = [
-    { id: 1, title: StringConst.courseOne,  capacity: "15"+ StringConst.kg, time: "60 "+StringConst.min, price: "1200 "+ StringConst.yen },
-    { id: 2, title: StringConst.courseTwo,  capacity: "11"+ StringConst.kg, time: "50 "+StringConst.min, price: "1000 "+ StringConst.yen },
-    { id: 3, title:StringConst.courseThree, capacity: "15"+ StringConst.kg, time: "20 "+StringConst.min, price: "700 " + StringConst.yen},
-    { id: 4, title: StringConst.courseFour, capacity: "11"+ StringConst.kg, time: "10 "+StringConst.minutes, price: "100 " + StringConst.yen},
+    {
+      id: 1,
+      title: StringConst.courseOne,
+      capacity: '15' + StringConst.kg,
+      time: '60 ' + StringConst.min,
+      price: '1200 ' + StringConst.yen,
+    },
+    {
+      id: 2,
+      title: StringConst.courseTwo,
+      capacity: '11' + StringConst.kg,
+      time: '50 ' + StringConst.min,
+      price: '1000 ' + StringConst.yen,
+    },
+    {
+      id: 3,
+      title: StringConst.courseThree,
+      capacity: '15' + StringConst.kg,
+      time: '20 ' + StringConst.min,
+      price: '700 ' + StringConst.yen,
+    },
+    {
+      id: 4,
+      title: StringConst.courseFour,
+      capacity: '11' + StringConst.kg,
+      time: '10 ' + StringConst.minutes,
+      price: '100 ' + StringConst.yen,
+    },
   ];
 
-  const handleMachinesClick = (item) => {
+  const handleMachinesClick = item => {
     if (item) {
       setCourseValue(item);
-      if(item.id == 4){
+      if (item.id == 4) {
         navigation.navigate(RouteName.Time_Range_Selection);
-      }else{
+      } else {
         navigation.navigate(RouteName.Payment_Selection);
       }
     }
   };
+  console.log(courseList);
 
   return (
     <View style={styles.container}>
       {/* Selected Appliances & Machines */}
       <View style={styles.selectedStyle}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', width : '90%'}}>
-        <Text style={[styles.selectedText]}>
-           {appliancesValue.name}
-        </Text>
-        <Text style={[styles.selectedText]}>
-          {machineValue.icon} {machineValue.capacity}
-        </Text>
-      </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '90%',
+          }}>
+          <Text style={[styles.selectedText]}>{appliancesValue.name}</Text>
+          <Text style={[styles.selectedText]}>
+            {machineValue.icon} {machineValue.capacity}
+          </Text>
+        </View>
       </View>
 
       {/* Header */}
@@ -55,23 +89,39 @@ const CourseSelection = ({ navigation }) => {
       </View>
 
       <View style={styles.applianceContainer}>
-        {washingOptions.map((option) => (
-          <TouchableOpacity
-            key={option.id}
-            style={[styles.fullWidthButton,courseValue.id == option.id ? styles.tertiaryButton: styles.secondaryButton]}
-            onPress={() => handleMachinesClick(option)}
-          >
-            <View style={styles.textContainer}>
-              <Text style={styles.title}>{option.title}</Text>
-            </View>
-            <View style={styles.detailsContainer}>
-              <Text style={styles.priceTime}>{option.time}</Text>
-            </View>
-            <View style={styles.detailsContainer}>
-              <Text style={styles.price}>{option.price}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+        {courseList &&
+          courseList.map(value => {
+            const option = {
+              id: value.id,
+              title: value.value.devicecourcename,
+              time: value.value.operatingtime,
+              price: value.value.fee,
+            };
+            return (
+              <TouchableOpacity
+                key={option.id}
+                style={[
+                  styles.fullWidthButton,
+                  courseValue.id === option.id
+                    ? styles.tertiaryButton
+                    : styles.secondaryButton,
+                ]}
+                onPress={() => handleMachinesClick(option)}>
+                <View style={styles.textContainer}>
+                  {/* Display the device name (washing/drying machine course name) */}
+                  <Text style={styles.title}>{option.title}</Text>
+                </View>
+                <View style={styles.detailsContainer}>
+                  {/* Display the operating time with a unit (e.g., minutes) */}
+                  <Text style={styles.priceTime}>{option.time} mins</Text>
+                </View>
+                <View style={styles.detailsContainer}>
+                  {/* Display the fee, you could add a currency symbol if needed */}
+                  <Text style={styles.price}>¥{option.price} yen</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
       </View>
 
       <View style={styles.spacer} />
@@ -148,12 +198,12 @@ const styles = StyleSheet.create({
   secondaryButton: {
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#999'
+    borderColor: '#999',
   },
   tertiaryButton: {
     backgroundColor: '#ccc',
     borderWidth: 1,
-    borderColor: '#444'
+    borderColor: '#444',
   },
   buttonText: {
     fontSize: 16,
@@ -171,13 +221,13 @@ const styles = StyleSheet.create({
     color: '#34495e',
   },
   priceTime: {
-      fontSize: 16,
-      fontWeight: '500',
-      color: '#34495e',
-      backgroundColor: '#eee',
-      paddingHorizontal: 10,
-      paddingVertical: 10,
-    },
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#34495e',
+    backgroundColor: '#eee',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
   spacer: {
     height: 20,
   },

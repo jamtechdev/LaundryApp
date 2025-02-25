@@ -7,6 +7,7 @@ export const AppProvider = ({ children }) => {
   const [appliancesValue, setAppliancesValue] = useState({});
   const [machineValue, setMachineValue] = useState({});
   const [courseValue, setCourseValue] = useState({});
+  const [courseList, setCourseList] = useState({});
   const [paymentValue, setPaymentValue] = useState({});
   const [timeRangeValue, setTimeRangeValue] = useState({});
   const [usingTimeValue, setUsingTimeValue] = useState({});
@@ -29,7 +30,9 @@ export const AppProvider = ({ children }) => {
         setPaymentValue,
         // API functions
         authToken,
-        setAuthToken
+        setAuthToken,
+        courseList,
+        setCourseList
       }}
     >
       {children}
