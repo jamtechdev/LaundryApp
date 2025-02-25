@@ -5,16 +5,18 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  FlatList,
 } from 'react-native';
 import RouteName from '../../utils/Constant';
 import StringConst from '../../utils/StringConstant';
-import {useAppContext} from '../../_context/AppProvider';
+import { useAppContext } from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import FooterText from '../../components/FooterText';
+import Colors from '../../utils/Colors';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const CourseSelection = ({navigation}) => {
+const CourseSelection = ({ navigation }) => {
   const {
     appliancesValue,
     machineValue,
@@ -23,61 +25,24 @@ const CourseSelection = ({navigation}) => {
     courseList,
   } = useAppContext();
 
-  const washingOptions = [
-    {
-      id: 1,
-      title: StringConst.courseOne,
-      capacity: '15' + StringConst.kg,
-      time: '60 ' + StringConst.min,
-      price: '1200 ' + StringConst.yen,
-    },
-    {
-      id: 2,
-      title: StringConst.courseTwo,
-      capacity: '11' + StringConst.kg,
-      time: '50 ' + StringConst.min,
-      price: '1000 ' + StringConst.yen,
-    },
-    {
-      id: 3,
-      title: StringConst.courseThree,
-      capacity: '15' + StringConst.kg,
-      time: '20 ' + StringConst.min,
-      price: '700 ' + StringConst.yen,
-    },
-    {
-      id: 4,
-      title: StringConst.courseFour,
-      capacity: '11' + StringConst.kg,
-      time: '10 ' + StringConst.minutes,
-      price: '100 ' + StringConst.yen,
-    },
-  ];
-
-  const handleMachinesClick = item => {
+  const handleMachinesClick = (item, index)=> {
     if (item) {
       setCourseValue(item);
-      if (item.id == 4) {
+      if (index === 3) {
         navigation.navigate(RouteName.Time_Range_Selection);
       } else {
         navigation.navigate(RouteName.Payment_Selection);
       }
     }
   };
-  console.log(courseList);
 
   return (
     <View style={styles.container}>
       {/* Selected Appliances & Machines */}
       <View style={styles.selectedStyle}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '90%',
-          }}>
-          <Text style={[styles.selectedText]}>{appliancesValue.name}</Text>
-          <Text style={[styles.selectedText]}>
+        <View style={styles.selectedRow}>
+          <Text style={styles.selectedText}>{appliancesValue.name}</Text>
+          <Text style={styles.selectedText}>
             {machineValue.icon} {machineValue.capacity}
           </Text>
         </View>
@@ -90,7 +55,7 @@ const CourseSelection = ({navigation}) => {
 
       <View style={styles.applianceContainer}>
         {courseList &&
-          courseList.map(value => {
+          courseList.map((value, index) => {
             const option = {
               id: value.id,
               title: value.value.devicecourcename,
@@ -102,21 +67,18 @@ const CourseSelection = ({navigation}) => {
                 key={option.id}
                 style={[
                   styles.fullWidthButton,
-                  courseValue.id === option.id
+                  index == 3
                     ? styles.tertiaryButton
                     : styles.secondaryButton,
                 ]}
-                onPress={() => handleMachinesClick(option)}>
+                onPress={() => handleMachinesClick(option, index)}>
                 <View style={styles.textContainer}>
-                  {/* Display the device name (washing/drying machine course name) */}
                   <Text style={styles.title}>{option.title}</Text>
                 </View>
                 <View style={styles.detailsContainer}>
-                  {/* Display the operating time with a unit (e.g., minutes) */}
                   <Text style={styles.priceTime}>{option.time} mins</Text>
                 </View>
                 <View style={styles.detailsContainer}>
-                  {/* Display the fee, you could add a currency symbol if needed */}
                   <Text style={styles.price}>¥{option.price} yen</Text>
                 </View>
               </TouchableOpacity>
@@ -126,7 +88,6 @@ const CourseSelection = ({navigation}) => {
 
       <View style={styles.spacer} />
       <ActionButtons />
-
       <FooterText />
     </View>
   );
@@ -139,7 +100,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 20,
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 15,
   },
   header: {
@@ -153,7 +114,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: '400',
-    color: '#222',
+    color: '#000', // Black text
     textAlign: 'center',
   },
   applianceContainer: {
@@ -173,12 +134,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 20,
-    backgroundColor: '#eee',
+    backgroundColor: Colors.bg,
+  },
+  selectedRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
   },
   selectedText: {
     fontSize: 18,
     fontWeight: '400',
-    color: '#000000',
+    color: '#000', // Black text
     textAlign: 'center',
   },
   fullWidthButton: {
@@ -188,43 +154,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
     flexDirection: 'row',
-    gap: 20,
     justifyContent: 'space-between',
     paddingHorizontal: 15,
   },
-  primaryButton: {
-    backgroundColor: '#3498db',
-  },
   secondaryButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#999',
+    borderColor: Colors.primary,
   },
   tertiaryButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#444',
-  },
-  buttonText: {
-    fontSize: 16,
-    color: '#ffffff',
-    fontWeight: '500',
+    borderColor: Colors.secondary,
   },
   title: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#2c3e50',
+    color: '#000', // Black text
   },
   price: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#34495e',
+    color: '#000', // Black text
   },
   priceTime: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#34495e',
-    backgroundColor: '#eee',
+    color: '#000', // Black text
+    backgroundColor: Colors.bg,
+    marginRight: 10,
     paddingHorizontal: 10,
     paddingVertical: 10,
   },

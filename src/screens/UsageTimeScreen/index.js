@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 import RouteName from '../../utils/Constant';
 import StringConst from '../../utils/StringConstant';
-import {useAppContext} from '../../_context/AppProvider';
+import { useAppContext } from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import FooterText from '../../components/FooterText';
+import Colors from '../../utils/Colors';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const UsageTimeScreen = ({navigation}) => {
+const UsageTimeScreen = ({ navigation }) => {
   const {
     machineValue,
     appliancesValue,
@@ -26,30 +27,60 @@ const UsageTimeScreen = ({navigation}) => {
 
   // Example data for usage time/cost selection
   const usageTimes = [
-    {id: 1, time: '10 '+ StringConst.min, price: '100 '+ StringConst.yen, selected: false},
-    {id: 2, time: '20 '+ StringConst.min, price: '200 '+ StringConst.yen, selected: false},
-    {id: 3, time: '30 '+ StringConst.min, price: '300 '+ StringConst.yen, selected: false},
-    {id: 4, time: '40 '+ StringConst.min, price: '400 '+ StringConst.yen, selected: false},
-    {id: 5, time: '50 '+ StringConst.min, price: '500 '+ StringConst.yen, selected: false},
-    {id: 6, time: '60 '+ StringConst.min, price: '600 '+ StringConst.yen, selected: false},
+    {
+      id: 1,
+      time: '10 ' + StringConst.min,
+      price: '100 ' + StringConst.yen,
+      selected: false,
+    },
+    {
+      id: 2,
+      time: '20 ' + StringConst.min,
+      price: '200 ' + StringConst.yen,
+      selected: false,
+    },
+    {
+      id: 3,
+      time: '30 ' + StringConst.min,
+      price: '300 ' + StringConst.yen,
+      selected: false,
+    },
+    {
+      id: 4,
+      time: '40 ' + StringConst.min,
+      price: '400 ' + StringConst.yen,
+      selected: false,
+    },
+    {
+      id: 5,
+      time: '50 ' + StringConst.min,
+      price: '500 ' + StringConst.yen,
+      selected: false,
+    },
+    {
+      id: 6,
+      time: '60 ' + StringConst.min,
+      price: '600 ' + StringConst.yen,
+      selected: false,
+    },
   ];
 
-  const handleUsingTimClick = option => {
-    // Set selected time range in context
+  const handleUsingTimClick = (option) => {
     setUsingTimeValue(option);
     navigation.navigate(RouteName.Payment_Selection);
   };
 
-  const renderUsingTimeItem = ({item}) => {
+  const renderUsingTimeItem = ({ item }) => {
     return (
       <TouchableOpacity
         style={[
           styles.fullWidthButton,
-          item.id == usingTimeValue.id
+          item.id === usingTimeValue?.id
             ? styles.tertiaryButton
             : styles.secondaryButton,
         ]}
-        onPress={() => handleUsingTimClick(item)}>
+        onPress={() => handleUsingTimClick(item)}
+      >
         <View style={styles.textContainer}>
           <Text style={styles.titleBox}>{item.time}</Text>
           <Text style={styles.title}>{item.price}</Text>
@@ -68,13 +99,7 @@ const UsageTimeScreen = ({navigation}) => {
             {machineValue?.icon} {machineValue?.capacity}
           </Text>
         </View>
-        <View
-          style={{
-            backgroundColor: '#ccc',
-            width: '70%',
-            paddingVertical: 5,
-            marginTop: 10,
-          }}>
+        <View style={styles.courseBox}>
           <Text style={styles.selectedText}>{courseValue?.title}</Text>
         </View>
       </View>
@@ -86,7 +111,7 @@ const UsageTimeScreen = ({navigation}) => {
 
       <FlatList
         data={usageTimes}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         numColumns={3}
         columnWrapperStyle={styles.columnWrapper}
         contentContainerStyle={styles.applianceContainer}
@@ -107,7 +132,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 20,
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF', // white background
     paddingHorizontal: 15,
   },
   selectedStyle: {
@@ -116,15 +141,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 20,
-    backgroundColor: '#eee',
+    backgroundColor: Colors.bg, // using custom bg color
   },
   applianceContainer: {
-    paddingBottom: 20, // space under the last row
+    paddingBottom: 20,
   },
-  // Ensures columns have space between them
   columnWrapper: {
     justifyContent: 'space-between',
-    marginBottom: 15, // space between rows
+    marginBottom: 15,
   },
   selectedRow: {
     flexDirection: 'row',
@@ -134,8 +158,17 @@ const styles = StyleSheet.create({
   selectedText: {
     fontSize: 18,
     fontWeight: '400',
-    color: '#000000',
+    color: '#000', // black text
     textAlign: 'center',
+  },
+  courseBox: {
+    backgroundColor: Colors.white,
+    borderColor: Colors.primary,
+    borderWidth: 1,
+    borderRadius: 5,
+    width: '85%',
+    paddingVertical: 5,
+    marginTop: 10,
   },
   header: {
     marginTop: 20,
@@ -148,7 +181,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: '400',
-    color: '#222',
+    color: '#000', // black text
     textAlign: 'center',
   },
   fullWidthButton: {
@@ -162,23 +195,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   secondaryButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#999',
+    borderColor: Colors.primary, // using secondary color for border
   },
   tertiaryButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
     borderWidth: 2,
-    borderColor: '#000',
+    borderColor: Colors.primary, // black border for selected state
   },
   textContainer: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#2c3e50',
+    color: '#000', // black text
     flexWrap: 'wrap',
     width: 40,
     textAlign: 'center',
@@ -186,30 +220,16 @@ const styles = StyleSheet.create({
   titleBox: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#2c3e50',
+    color: '#000', // black text
     flexWrap: 'wrap',
     width: 40,
-    backgroundColor: '#eee',
+    backgroundColor: Colors.bg,
     marginRight: 7,
     paddingHorizontal: 5,
     paddingVertical: 5,
     textAlign: 'center',
   },
-  bottomButtons: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 30,
-  },
-  bottomButton: {
-    backgroundColor: '#ccc',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  bottomButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
+  spacer: {
+    height: 20,
   },
 });

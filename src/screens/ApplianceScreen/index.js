@@ -5,18 +5,21 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Image,
 } from 'react-native';
 import RouteName from '../../utils/Constant';
 import StringConst from '../../utils/StringConstant';
-import {useAppContext} from '../../_context/AppProvider';
+import { useAppContext } from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import FooterText from '../../components/FooterText';
+import Colors from '../../utils/Colors';
+import Images from '../../utils/Images'; // Import your Images object
 import deviceService from '../../_services/device.service';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const ApplianceScreen = ({navigation}) => {
-  const {setAppliancesValue, setAuthToken,  courseList, setCourseList} = useAppContext();
+const ApplianceScreen = ({ navigation }) => {
+  const { setAppliancesValue, setAuthToken, courseList, setCourseList } = useAppContext();
   const appliances = [
     {
       id: 1,
@@ -44,7 +47,6 @@ const ApplianceScreen = ({navigation}) => {
     },
   ];
 
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -53,12 +55,11 @@ const ApplianceScreen = ({navigation}) => {
         setAuthToken(token);
 
         // Query by shop id
-        const deviceShopResponse = await deviceService.getLandryDeviceListwithShop(87, token)
-        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00087000001', token)
-        const coursedResponse = await deviceService.getLandryDeviceCourseList('00087000001', token)
-        setCourseList(coursedResponse.data.data)
-        console.log(deviceIdResponse,'Device List by Shop ID:',deviceShopResponse,coursedResponse);
-
+        const deviceShopResponse = await deviceService.getLandryDeviceListwithShop(87, token);
+        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00087000001', token);
+        const coursedResponse = await deviceService.getLandryDeviceCourseList('00087000001', token);
+        setCourseList(coursedResponse.data.data);
+        console.log(deviceIdResponse, 'Device List by Shop ID:', deviceShopResponse, coursedResponse);
       } catch (error) {
         console.error('Error in API calls:', error);
       }
@@ -66,7 +67,6 @@ const ApplianceScreen = ({navigation}) => {
 
     fetchData();
   }, []);
-
 
   const handleApplianceClick = item => {
     if (item) {
@@ -84,23 +84,23 @@ const ApplianceScreen = ({navigation}) => {
 
       {/* First (selected) button */}
       <TouchableOpacity
-        style={styles.selectedButton}
+        style={[styles.selectedButton, { borderColor: Colors.primary }]}
         onPress={() => handleApplianceClick(appliances[0])}>
         <Text style={styles.selectedButtonText}>{appliances[0].name}</Text>
       </TouchableOpacity>
 
       {/* Row with 2 half-width buttons */}
       <View style={styles.row}>
-        <View style={[styles.halfButtonWrapper, {marginRight: 10}]}>
+        <View style={[styles.halfButtonWrapper, { marginRight: 10 }]}>
           <TouchableOpacity
-            style={styles.unselectedButton}
+            style={[styles.unselectedButton, { borderColor: Colors.primary }]}
             onPress={() => handleApplianceClick(appliances[1])}>
             <Text style={styles.unselectedButtonText}>{appliances[1].name}</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.halfButtonWrapper}>
           <TouchableOpacity
-            style={styles.unselectedButton}
+            style={[styles.unselectedButton, { borderColor: Colors.secondary }]}
             onPress={() => handleApplianceClick(appliances[2])}>
             <Text style={styles.unselectedButtonText}>
               {appliances[2].name}
@@ -111,31 +111,29 @@ const ApplianceScreen = ({navigation}) => {
 
       {/* Last full-width unselected button */}
       <TouchableOpacity
-        style={styles.unselectedButton}
+        style={[styles.unselectedButton, { borderColor: Colors.tertiary }]}
         onPress={() => handleApplianceClick(appliances[3])}>
         <Text style={styles.unselectedButtonText}>{appliances[3].name}</Text>
       </TouchableOpacity>
 
-      {/* Payment methods heading */}
-      <Text style={styles.paymentHeading}>利用可能な支払い方法</Text>
-
-      {/* Payment buttons row */}
-      <View style={styles.paymentRow}>
-        <TouchableOpacity style={styles.paymentButton}>
-          <Text style={styles.paymentButtonText}>{StringConst.paypay}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.paymentButton}>
-          <Text style={styles.paymentButtonText}>{StringConst.aupay}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.paymentButton}>
-          <Text style={styles.paymentButtonText}>{StringConst.dPayment}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.paymentButton}>
-          <Text style={styles.paymentButtonText}>{StringConst.rpay}</Text>
-        </TouchableOpacity>
+      {/* Payment Methods Section */}
+      <View style={styles.paymentSection}>
+        <Text style={styles.paymentHeading}>利用可能な支払い方法</Text>
+        <View style={styles.paymentRow}>
+          <TouchableOpacity style={styles.paymentButton}>
+            <Image source={Images.paypay} style={styles.paymentImage} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.paymentButton}>
+            <Image source={Images.aupay} style={styles.paymentImage} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.paymentButton}>
+            <Image source={Images.dpay} style={styles.paymentImage} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.paymentButton}>
+            <Image source={Images.rpay} style={styles.paymentImage} />
+          </TouchableOpacity>
+        </View>
       </View>
-
-
       <FooterText />
     </View>
   );
@@ -148,7 +146,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   heading: {
     fontSize: 18,
@@ -157,7 +155,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
   },
-  // Selected (first) button style: black background, white text
   selectedButton: {
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -165,14 +162,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: '#000',
   },
   selectedButtonText: {
     color: '#000',
     fontSize: 16,
     fontWeight: '400',
   },
-  // Wrapper for half-width buttons
   row: {
     flexDirection: 'row',
     marginBottom: 20,
@@ -180,11 +175,9 @@ const styles = StyleSheet.create({
   halfButtonWrapper: {
     flex: 1,
   },
-  // Unselected button style: white background, black border
   unselectedButton: {
     backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#000',
     borderRadius: 8,
     paddingVertical: 15,
     alignItems: 'center',
@@ -195,7 +188,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
   },
-  // Payment heading
+  paymentSection: {
+    backgroundColor: Colors.bg,
+    paddingHorizontal: 5,
+    paddingVertical: 20,
+    marginTop: 50,
+  },
   paymentHeading: {
     fontSize: 16,
     fontWeight: '400',
@@ -203,27 +201,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
     paddingVertical: 10,
-    backgroundColor: '#eee',
-    marginTop: 40,
   },
-  // Payment buttons row
   paymentRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
   },
   paymentButton: {
     backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: Colors.primary,
     borderRadius: 8,
     paddingVertical: 15,
-    width: (width - 60) / 4, // 20px padding on each side + spacing
+    width: (width - 60) / 4,
     alignItems: 'center',
   },
-  paymentButtonText: {
-    color: '#000',
-    fontSize: 14,
-    fontWeight: '400',
+  paymentImage: {
+    width: 40, // adjust as needed
+    height: 40, // adjust as needed
+    resizeMode: 'contain',
   },
 });

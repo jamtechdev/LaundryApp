@@ -3,11 +3,12 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import StringConst from '../../utils/StringConstant';
 import RouteName from '../../utils/Constant';
 import FooterText from '../../components/FooterText';
+import Colors from '../../utils/Colors';
 
 const CompletionScreen = ({ navigation }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace(RouteName.Appliance_Screen)
+      navigation.replace(RouteName.Appliance_Screen);
     }, 30000);
 
     return () => clearTimeout(timer); // Cleanup timer
@@ -24,9 +25,10 @@ const CompletionScreen = ({ navigation }) => {
         <Text style={styles.buttonText}>{StringConst.completion}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.timerText}>{StringConst.completionNote} 30 {StringConst.seconds}</Text>
+      <Text style={styles.timerText}>
+        {StringConst.completionNote} 30 {StringConst.seconds}
+      </Text>
       
- 
       <FooterText />
     </View>
   );
@@ -47,7 +49,7 @@ const styles = StyleSheet.create({
   },
   button: { 
     borderWidth: 1, 
-    borderColor: '#444', 
+    borderColor: Colors.primary, 
     paddingVertical: 12, 
     paddingHorizontal: 25, 
     borderRadius: 8, 
@@ -55,19 +57,13 @@ const styles = StyleSheet.create({
   },
   buttonText: { 
     fontSize: 16, 
-    color: '#444', 
+    color: '#000' 
   },
   timerText: { 
     fontSize: 14, 
     color: '#000', 
     marginTop: 20 
   },
-  footerText: { 
-    position: 'absolute', 
-    bottom: 20, 
-    fontSize: 12, 
-    color: '#000' 
-  }
 });
 
 export default CompletionScreen;

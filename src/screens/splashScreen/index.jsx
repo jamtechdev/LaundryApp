@@ -1,14 +1,18 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text, ActivityIndicator, ImageBackground } from 'react-native';
 import StringConst from '../../utils/StringConstant';
+import Images from '../../utils/Images';
 
 const SplashScreen = ({ navigation }) => {
-
   return (
-    <View style={styles.container}>
+    <ImageBackground 
+      source={Images.background}
+      style={styles.container}
+      resizeMode="cover"
+    >
       <Text style={styles.title}>{StringConst.appName}</Text>
       <ActivityIndicator size="large" color="#fff" style={styles.loader} />
-    </View>
+    </ImageBackground>
   );
 };
 
@@ -17,14 +21,14 @@ export default SplashScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3498db', // Blue theme background
+    // No backgroundColor needed as the image will cover it
     justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#ffffff', // White text for contrast
+    color: '#ffffff',
     marginBottom: 20,
   },
   loader: {

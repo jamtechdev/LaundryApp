@@ -11,6 +11,7 @@ import StringConst from '../../utils/StringConstant';
 import { useAppContext } from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import FooterText from '../../components/FooterText';
+import Colors from '../../utils/Colors';
 
 const { width } = Dimensions.get('window');
 
@@ -25,13 +26,24 @@ const TimeRangeSelection = ({ navigation }) => {
 
   // Sample time range data
   const timeRangeOptions = [
-    { id: 1, title: '10-60 '+ StringConst.minutes, price: '700 '+StringConst.yen+ StringConst.to+'800 ' +StringConst.yen },
-    { id: 2, title: '70-120 '+StringConst.minutes, price: '800 '+StringConst.yen+ StringConst.to+'900 ' +StringConst.yen },
-    { id: 3, title: '130-180 '+StringConst.minutes, price: '1000 '+StringConst.yen+ StringConst.to+'1100 ' +StringConst.yen },
+    {
+      id: 1,
+      title: '10-60 ' + StringConst.minutes,
+      price: '700 ' + StringConst.yen + StringConst.to + '800 ' + StringConst.yen,
+    },
+    {
+      id: 2,
+      title: '70-120 ' + StringConst.minutes,
+      price: '800 ' + StringConst.yen + StringConst.to + '900 ' + StringConst.yen,
+    },
+    {
+      id: 3,
+      title: '130-180 ' + StringConst.minutes,
+      price: '1000 ' + StringConst.yen + StringConst.to + '1100 ' + StringConst.yen,
+    },
   ];
 
   const handleTimeRangeClick = (option) => {
-    // Set selected time range in context
     setTimeRangeValue(option);
     navigation.navigate(RouteName.Using_Time_Selection);
   };
@@ -41,26 +53,19 @@ const TimeRangeSelection = ({ navigation }) => {
       {/* Selected Appliances & Machines */}
       <View style={styles.selectedStyle}>
         <View style={styles.selectedRow}>
-          <Text style={styles.selectedText}>
-            {appliancesValue?.name}
-          </Text>
+          <Text style={styles.selectedText}>{appliancesValue?.name}</Text>
           <Text style={styles.selectedText}>
             {machineValue?.icon} {machineValue?.capacity}
           </Text>
         </View>
-        <View style={{ backgroundColor: '#ccc', width : '70%', paddingVertical:5, marginTop: 10}}>
-            
-        <Text style={styles.selectedText}>
-            {courseValue?.title}
-          </Text>
+        <View style={styles.courseBox}>
+          <Text style={styles.selectedText}>{courseValue?.title}</Text>
         </View>
       </View>
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>
-          {StringConst.timeRangeHeading}
-        </Text>
+        <Text style={styles.headerText}>{StringConst.timeRangeHeading}</Text>
       </View>
 
       {/* Time Range Options */}
@@ -86,7 +91,6 @@ const TimeRangeSelection = ({ navigation }) => {
         ))}
       </View>
 
-      {/* Bottom Spacer & Action Buttons */}
       <View style={styles.spacer} />
       <ActionButtons />
       <FooterText />
@@ -101,7 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 20,
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF', // White background
     paddingHorizontal: 15,
   },
   selectedStyle: {
@@ -110,7 +114,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 20,
-    backgroundColor: '#eee',
+    backgroundColor: Colors.bg,
   },
   selectedRow: {
     flexDirection: 'row',
@@ -120,8 +124,17 @@ const styles = StyleSheet.create({
   selectedText: {
     fontSize: 18,
     fontWeight: '400',
-    color: '#000000',
+    color: '#000', // Black text
     textAlign: 'center',
+  },
+  courseBox: {
+    backgroundColor: Colors.white,
+    borderColor: Colors.primary,
+    borderWidth: 1,
+    borderRadius: 5,
+    width: '85%',
+    paddingVertical: 5,
+    marginTop: 10,
   },
   header: {
     marginTop: 20,
@@ -134,7 +147,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: '400',
-    color: '#222',
+    color: '#000', // Black text
     textAlign: 'center',
   },
   applianceContainer: {
@@ -149,19 +162,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
     flexDirection: 'row',
-    gap: 20,
     justifyContent: 'space-between',
     paddingHorizontal: 15,
   },
   secondaryButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#999',
+    borderColor: Colors.primary,
   },
   tertiaryButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#444',
+    borderColor: Colors.secondary,
   },
   textContainer: {
     flex: 1,
@@ -172,12 +184,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#2c3e50',
+    color: '#000', // Black text
   },
   price: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#34495e',
+    color: '#000', // Black text
   },
   spacer: {
     height: 20,

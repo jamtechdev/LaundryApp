@@ -1,20 +1,16 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 import RouteName from '../../utils/Constant';
 import StringConst from '../../utils/StringConstant';
-import {useAppContext} from '../../_context/AppProvider';
+import { useAppContext } from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import FooterText from '../../components/FooterText';
+import Colors from '../../utils/Colors';
+import Images from '../../utils/Images';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const PaymentSelection = ({navigation}) => {
+const PaymentSelection = ({ navigation }) => {
   const {
     appliancesValue,
     machineValue,
@@ -25,13 +21,13 @@ const PaymentSelection = ({navigation}) => {
   } = useAppContext();
 
   const paymentMethods = [
-    {id: 1, name: StringConst.paypay},
-    {id: 2, name: StringConst.aupay},
-    {id: 3, name: StringConst.dPayment},
-    {id: 4, name: StringConst.rpay},
+    { id: 1, name: StringConst.paypay, image: Images.paypay },
+    { id: 2, name: StringConst.aupay, image: Images.aupay },
+    { id: 3, name: StringConst.dPayment, image: Images.dpay },
+    { id: 4, name: StringConst.rpay, image: Images.rpay },
   ];
 
-  const handlePaymentClick = option => {
+  const handlePaymentClick = (option) => {
     setPaymentValue(option);
     navigation.navigate(RouteName.Payment_QR);
   };
@@ -45,19 +41,14 @@ const PaymentSelection = ({navigation}) => {
             {machineValue?.icon} {machineValue?.capacity}
           </Text>
         </View>
-        <View
-          style={{
-            backgroundColor: '#ccc',
-            width: '85%',
-            paddingVertical: 5,
-            marginTop: 10,
-          }}>
-          {courseValue.id == 4 ? (
-            <Text style={[styles.selectedText, {fontSize: 16}]}>
-              {courseValue?.title} - <Text style={{ backgroundColor: '#eee',}}>{usingTimeValue.time}</Text> - {usingTimeValue.price}
+        <View style={styles.courseBox}>
+          {courseValue.id === 4 ? (
+            <Text style={[styles.selectedText, styles.courseText]}>
+              {courseValue?.title} -{' '}
+              <Text style={styles.usingTimeBox}>{usingTimeValue.time}</Text> - {usingTimeValue.price}
             </Text>
           ) : (
-            <Text style={[styles.selectedText, {fontSize: 16}]}>
+            <Text style={[styles.selectedText, styles.courseText]}>
               {courseValue?.title} - {courseValue.time} - {courseValue.price}
             </Text>
           )}
@@ -69,14 +60,14 @@ const PaymentSelection = ({navigation}) => {
       </View>
 
       <View style={styles.paymentContainer}>
-        {paymentMethods.map(option => (
+        {paymentMethods.map((option) => (
           <TouchableOpacity
             key={option.id}
             onPress={() => handlePaymentClick(option)}
-            style={[styles.paymentButton, styles.selectedPaymentButton]}>
-            <Text style={[styles.paymentText, styles.selectedPaymentText]}>
-              {option.name}
-            </Text>
+            style={[styles.paymentButton, styles.selectedPaymentButton]}
+          >
+            <Image source={option.image} style={styles.paymentImage} />
+            <Text style={styles.paymentTitle}>{option.name}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -96,32 +87,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
   },
-  selectedContainer: {
-    width: '100%',
-    backgroundColor: '#f8f9fa',
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
+  selectedStyle: {
+    width: '93%',
+    paddingVertical: 25,
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 20,
+    backgroundColor: Colors.bg,
   },
-  machineIcon: {
-    backgroundColor: '#ccc',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+  selectedRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
+  },
+  selectedText: {
+    fontSize: 18,
+    fontWeight: '400',
+    color: '#000', // black text
+    textAlign: 'center',
+  },
+  courseBox: {
+    backgroundColor: Colors.white,
+    borderColor: Colors.primary,
+    borderWidth: 1,
     borderRadius: 5,
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#2c3e50',
-    marginRight: 5,
+    width: '85%',
+    paddingVertical: 5,
+    marginTop: 10,
   },
   courseText: {
     fontSize: 16,
-    color: '#34495e',
-    fontWeight: '600',
-    marginTop: 5,
+  },
+  usingTimeBox: {
+    backgroundColor: '#eee',
+    paddingHorizontal: 5,
   },
   header: {
     marginVertical: 45,
@@ -133,7 +132,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '500',
     marginBottom: 20,
-    color: '#000',
+    color: '#000', // black text
+    textAlign: 'center',
   },
   paymentContainer: {
     width: '100%',
@@ -145,41 +145,26 @@ const styles = StyleSheet.create({
   },
   paymentButton: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: Colors.secondary, // use secondary color for border
     paddingVertical: 20,
     paddingHorizontal: 13,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   selectedPaymentButton: {
     backgroundColor: '#fff',
     borderWidth: 2,
   },
-  paymentText: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: '#2c3e50',
+  paymentImage: {
+    width: 40,
+    height: 40,
+    resizeMode: 'contain',
   },
-  selectedPaymentText: {
-    color: '#2c3e50',
-  },
-  selectedStyle: {
-    width: '93%',
-    paddingVertical: 25,
-    alignItems: 'center',
-    marginTop: 40,
-    marginBottom: 20,
-    backgroundColor: '#eee',
-  },
-  selectedRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '90%',
-  },
-  selectedText: {
-    fontSize: 18,
-    fontWeight: '400',
-    color: '#000000',
+  paymentTitle: {
+    marginTop: 5,
+    fontSize: 14,
+    color: '#000', // black text
     textAlign: 'center',
   },
 });

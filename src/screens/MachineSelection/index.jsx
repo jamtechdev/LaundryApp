@@ -12,15 +12,16 @@ import StringConst from '../../utils/StringConstant';
 import { useAppContext } from '../../_context/AppProvider';
 import ActionButtons from '../../components/ActionButtons';
 import FooterText from '../../components/FooterText';
+import Colors from '../../utils/Colors'; // Import your custom Colors
 
 const { width } = Dimensions.get('window');
 
 const MachineSelection = ({ navigation }) => {
   const { appliancesValue, setMachineValue } = useAppContext();
   const [machines, setMachines] = useState([
-    { id: 1, capacity: '15/11'+StringConst.kg, icon: '1️⃣', selected: false },
-    { id: 2, capacity: '27/15'+StringConst.kg, icon: '2️⃣', selected: false },
-    { id: 3, capacity: '27/15'+StringConst.kg, icon: '3️⃣', selected: false },
+    { id: 1, capacity: '15/11' + StringConst.kg, icon: '1️⃣', selected: false },
+    { id: 2, capacity: '27/15' + StringConst.kg, icon: '2️⃣', selected: false },
+    { id: 3, capacity: '27/15' + StringConst.kg, icon: '3️⃣', selected: false },
   ]);
 
   const handleMachinesClick = (item) => {
@@ -46,7 +47,12 @@ const MachineSelection = ({ navigation }) => {
         ]}
         onPress={() => handleMachinesClick(item)}
       >
-        <Text style={[styles.buttonText, item.selected && styles.selectedText]}>
+        <Text
+          style={[
+            styles.buttonText,
+            item.selected && styles.selectedText,
+          ]}
+        >
           {item.icon} {item.capacity}
         </Text>
       </TouchableOpacity>
@@ -64,7 +70,9 @@ const MachineSelection = ({ navigation }) => {
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>{StringConst.machineSelection}</Text>
+        <Text style={styles.headerText}>
+          {StringConst.machineSelection}
+        </Text>
       </View>
 
       {/* Machine Selection using FlatList */}
@@ -91,7 +99,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 20,
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF', // you can also use Colors.bg if desired
     paddingHorizontal: 15,
   },
   header: {
@@ -104,7 +112,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: '400',
-    color: '#000',
+    color: '#444', // use primary color
     textAlign: 'center',
   },
   selectedStyle: {
@@ -113,44 +121,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 20,
-    backgroundColor: '#eee',
+    backgroundColor: Colors.bg, // using custom bg color
   },
   selectedText: {
     fontSize: 18,
     fontWeight: '500',
-    color: '#000000',
+    color: Colors.primary, // using primary for selected text
     textAlign: 'center',
   },
-  // Spacing for the FlatList items
   applianceContainer: {
     paddingBottom: 20, // space under the last row
   },
-  // Ensures columns have space between them
   columnWrapper: {
     justifyContent: 'space-between',
     marginBottom: 15, // space between rows
   },
-  // Each grid item takes ~48% width to fit two in a row
   gridItem: {
     width: '48%',
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
   },
-  // Colors for selected vs. unselected
   selectedButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
     borderWidth: 2,
-    borderColor: '#999',
+    borderColor: Colors.primary, // use primary color for selected border
   },
   unselectedButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: Colors.primary, // use secondary color for unselected border
   },
   buttonText: {
     fontSize: 16,
     fontWeight: '400',
-    color: '#2c3e50',
+    color: Colors.primary, // using primary color for text
   },
 });

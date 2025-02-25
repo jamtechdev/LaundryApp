@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Alert, StyleSheet, Dimensions } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import RouteName from '../utils/Constant';
 import StringConst from '../utils/StringConstant';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,7 +25,7 @@ const ActionButtons = () => {
   return (
     <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.returnButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>🔙 </Text>
+        <Text style={styles.buttonText}>⬅ </Text>
         <Text style={styles.buttonText}>{StringConst.return} </Text>
       </TouchableOpacity>
 
@@ -53,13 +54,13 @@ const styles = StyleSheet.create({
   },
   returnButton: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.primary,
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: 'center',
     marginRight: 10,
-    borderColor: '#444',
+    borderColor: Colors.primary,
     borderWidth: 1,
     flexDirection: 'row',
     width: '80%',
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#ccc',
+    backgroundColor: '#fff',
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    color: '#444',
+    color: '#fff',
   },
   buttonTextCancel: {
     fontSize: 16,
