@@ -53,9 +53,9 @@ const ApplianceScreen = ({navigation}) => {
         setAuthToken(token);
 
         // Query by shop id
-        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00001999987', token)
-        const deviceShopResponse = await deviceService.getLandryDeviceListwithShop(1, token)
-        console.log(deviceIdResponse,'Device List by Shop ID:', deviceShopResponse);
+        const deviceIdResponse = await deviceService.getLandryDeviceListwithDeviceId('00087000003', token)
+        const deviceShopResponse = await deviceService.getLandryDeviceListwithShop(87, token)
+        console.log(deviceIdResponse,'Device List by Shop ID:',deviceShopResponse);
 
       } catch (error) {
         console.error('Error in API calls:', error);

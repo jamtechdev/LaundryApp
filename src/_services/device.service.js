@@ -41,7 +41,7 @@ function getAuthToken() {
  * @param {string} token - The bearer token for authorization.
  */
 function getLandryDeviceListwithDeviceId(deviceId, token) {
-    const url = `${API_BASE_URL}/data/LandryDeviceList/query-column`;
+    const url = `${API_BASE_URL}/data/LandryShopDeviceList/query-column`;
     const params = { q: `deviceid eq ${deviceId}` };
 
     return axios.get(url, {
@@ -60,7 +60,7 @@ function getLandryDeviceListwithDeviceId(deviceId, token) {
  * @param {string} token - The bearer token for authorization.
  */
 function getLandryDeviceListwithShop(shopId, token) {
-    const url = `${API_BASE_URL}/data/LandryDeviceList/query-column`;
+    const url = `${API_BASE_URL}/data/LandryShopDeviceList/query-column`;
     const params = { q: `shop eq ${shopId}` };
 
     return axios.get(url, {
